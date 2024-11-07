@@ -2,10 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { IMAGEN_EDIT, IMAGEN_DELETE, ITEMS_PER_PAGE } from "../App.config";
 import { ServicioContext } from "./ServicioContext";
-import {
-  eliminarServicio,
-  obtenerServicios,
-} from "../Services/ServicioService";
+import { eliminarServicio, obtenerServicios } from "../Services/ServicioService";
 
 export default function ListadoServicio() {
   const { servicios, setServicios } = useContext(ServicioContext);
@@ -22,15 +19,13 @@ export default function ListadoServicio() {
 
   useEffect(() => {
     getDatos();
-
-    console.log("Servicios actualizados:", servicios); // Agrega este log para verificar los datos
-  }, [page, pageSize, consulta]);
+  }, [page, pageSize]);
 
   const getDatos = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await obtenerServicios(consulta, page, pageSize);
+      const response = await obtenerServicios("", page, pageSize); // Cargar todos los servicios
       setServicios(response.content);
       setTotalPages(response.totalPages);
     } catch (err) {
@@ -73,10 +68,26 @@ export default function ListadoServicio() {
     setSortConfig({ key, direction });
   };
 
-  const sortedData = () => {
-    const sorted = [...servicios];
-    if (sortConfig.key !== null) {
-      sorted.sort((a, b) => {
+  const formatearFecha = (fecha) => {
+    const date = new Date(fecha);
+    const dia = String(date.getDate()).padStart(2, '0'); // Añade ceros en el caso de días de un solo dígito
+    const mes = String(date.getMonth() + 1).padStart(2, '0'); // Los meses empiezan desde 0, así que se suma 1
+    const año = date.getFullYear();
+  
+    return `${dia}/${mes}/${año}`; // Puedes modificar el formato según tus necesidades
+  };
+  
+
+  const filteredData = () => {
+    const query = consulta.toLowerCase();
+    const sorted = [...servicios]
+      .filter((servicio) => 
+        servicio.id.toString().includes(query) ||
+        servicio.clienteRazonSocial.toLowerCase().includes(query) ||
+        servicio.fechaDocumento.toLowerCase().includes(query)
+      )
+      .sort((a, b) => {
+        if (sortConfig.key === null) return 0;
         if (a[sortConfig.key] < b[sortConfig.key]) {
           return sortConfig.direction === "ascending" ? -1 : 1;
         }
@@ -85,7 +96,6 @@ export default function ListadoServicio() {
         }
         return 0;
       });
-    }
     return sorted;
   };
 
@@ -109,10 +119,7 @@ export default function ListadoServicio() {
           />
         </div>
         <div className="col-1">
-          <button
-            onClick={() => getDatos()}
-            className="btn btn-outline-success"
-          >
+          <button onClick={getDatos} className="btn btn-outline-success">
             Buscar
           </button>
         </div>
@@ -137,18 +144,17 @@ export default function ListadoServicio() {
                     </span>
                   )}
                 </th>
-
-                <th scope="col" onClick={() => handleSort("cliente")}>
+                <th scope="col" onClick={() => handleSort("clienteRazonSocial")}>
                   Cliente
-                  {sortConfig.key === "cliente" && (
+                  {sortConfig.key === "clienteRazonSocial" && (
                     <span>
                       {sortConfig.direction === "ascending" ? " 🔽" : " 🔼"}
                     </span>
                   )}
                 </th>
-                <th scope="col" onClick={() => handleSort("fecha")}>
+                <th scope="col" onClick={() => handleSort("fechaDocumento")}>
                   Fecha
-                  {sortConfig.key === "fecha" && (
+                  {sortConfig.key === "fechaDocumento" && (
                     <span>
                       {sortConfig.direction === "ascending" ? " 🔽" : " 🔼"}
                     </span>
@@ -158,12 +164,11 @@ export default function ListadoServicio() {
               </tr>
             </thead>
             <tbody>
-              {sortedData().map((servicio, indice) => (
+              {filteredData().map((servicio, indice) => (
                 <tr key={indice}>
                   <th scope="row">{servicio.id}</th>
-
                   <td>{servicio.clienteRazonSocial}</td>
-                  <td>{servicio.fechaDocumento}</td>
+                  <td>{formatearFecha(servicio.fechaDocumento)}</td>
                   <td className="text-center">
                     <div>
                       <Link

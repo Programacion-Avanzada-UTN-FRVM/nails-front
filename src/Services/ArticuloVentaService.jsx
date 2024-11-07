@@ -61,6 +61,6 @@ export async function eliminarArticulosVenta(id) {
     return true;
   } catch (error) {
     console.error("Error al eliminar el artículo:", error);
-    throw new Error("No se pudo eliminar el artículo.");
+    throw new Error("No se pudo eliminar el artículo porque tiene asociado una linea.");
   }
 }
