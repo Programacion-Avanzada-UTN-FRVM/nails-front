@@ -7,8 +7,7 @@ import {
 } from "../Services/TipoServicioService";
 
 export default function TipoServicio({ title }) {
-  let navegacion = useNavigate();
-
+  const navegacion = useNavigate();
   const { id } = useParams();
 
   const [tipoServicio, setTipoServicio] = useState({
@@ -18,50 +17,56 @@ export default function TipoServicio({ title }) {
   const { denominacion } = tipoServicio;
 
   useEffect(() => {
-    cargarModel();
+    cargarTipoServicio();
   }, []);
 
-  const cargarModel = async () => {
+  const cargarTipoServicio = async () => {
     if (id > 0) {
-      console.log(id);
-      const resultado = await obtenerTipoServicio(id);
-      setTipoServicio(resultado);
+      try {
+        const resultado = await obtenerTipoServicio(id);
+        setTipoServicio(resultado);
+      } catch (error) {
+        console.error("Error al cargar el tipo de servicio:", error);
+        alert("Hubo un problema al cargar el tipo de servicio. Intente nuevamente.");
+      }
     }
   };
 
   const onInputChange = ({ target: { name, value } }) => {
-    //spread operator ... (expandir los atributos)
     setTipoServicio({ ...tipoServicio, [name]: value });
   };
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    newTipoServicio(tipoServicio);
-    // Redirigimos a la pagina de inicio
-    navegacion("/tipoServicioList");
+    try {
+      await newTipoServicio(tipoServicio);
+      navegacion("/tipoServicioList");
+    } catch (error) {
+      console.error("Error al guardar el tipo de servicio:", error);
+      alert("Hubo un problema al guardar el tipo de servicio. Intente nuevamente.");
+    }
   };
 
   return (
     <div className="container">
       <div>
         <h1> Gestión de tipo servicio / {title} </h1>
-        <hr></hr>
+        <hr />
       </div>
 
-      <form onSubmit={(e) => onSubmit(e)}>
+      <form onSubmit={onSubmit}>
         <div className="mb-3">
           <label htmlFor="denominacion" className="form-label">
-            {" "}
-            Denominacion
+            Denominación
           </label>
           <input
             type="text"
             className="form-control"
             id="denominacion"
             name="denominacion"
-            required={true}
+            required
             value={denominacion}
-            onChange={(e) => onInputChange(e)}
+            onChange={onInputChange}
           />
         </div>
 

@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -9,7 +8,6 @@ import { obtenerLineas2 } from "../Services/LineaService";
 
 export default function ArticuloVenta({ title }) {
   let navegacion = useNavigate();
-
   const { id } = useParams();
 
   const [articulo, setArticulo] = useState({
@@ -18,8 +16,8 @@ export default function ArticuloVenta({ title }) {
   });
 
   const [listaLineas, setListaLineas] = useState([]);
-  const [selectedLinea, setSelectedLinea] = useState({});
-  const { denominacion, linea } = articulo;
+  const [selectedLinea, setSelectedLinea] = useState("");
+  const { denominacion } = articulo;
 
   useEffect(() => {
     cargarModel();
@@ -28,7 +26,6 @@ export default function ArticuloVenta({ title }) {
 
   const cargarModel = async () => {
     if (id > 0) {
-      console.log(id);
       const resultado = await obtenerArticuloVenta(id);
       setArticulo(resultado);
       setSelectedLinea(resultado.linea);
@@ -36,14 +33,11 @@ export default function ArticuloVenta({ title }) {
   };
 
   const cargarLineas = async () => {
-    console.log(id);
-
     const resultado = await obtenerLineas2();
     setListaLineas(resultado);
   };
 
   const onInputChange = ({ target: { name, value } }) => {
-    //spread operator ... (expandir los atributos)
     setArticulo({ ...articulo, [name]: value });
   };
 
@@ -52,42 +46,45 @@ export default function ArticuloVenta({ title }) {
 
     const data = {
       ...articulo,
-      linea: selectedLinea, // Asumiendo que la línea seleccionada es el id de la línea
+      linea: selectedLinea, // Solo el ID de la línea
     };
-    window.alert("id lina" + selectedLinea);
-    newArticuloVenta(data);
-    // Redirigimos a la pagina de inicio
-    navegacion("/articuloList");
+
+    try {
+      await newArticuloVenta(data); 
+      navegacion("/articuloList"); 
+    } catch (error) {
+      console.error("Error al guardar el artículo de venta:", error);
+      alert("Hubo un problema al guardar el artículo. Intente nuevamente.");
+    }
   };
 
   return (
     <div className="container">
       <div>
-        <h1> Gestión de articulo / {title} </h1>
-        <hr></hr>
+        <h1> Gestión de artículo / {title} </h1>
+        <hr />
       </div>
 
-      <form onSubmit={(e) => onSubmit(e)}>
+      <form onSubmit={onSubmit}>
         <div className="mb-3">
           <label htmlFor="denominacion" className="form-label">
-            {" "}
-            Denominacion
+            Denominación
           </label>
           <input
             type="text"
             className="form-control"
             id="denominacion"
             name="denominacion"
-            required={true}
+            required
             value={denominacion}
-            onChange={(e) => onInputChange(e)}
+            onChange={onInputChange}
           />
 
-          <label htmlFor="listaLineas">Selecciona una linea:</label>
+          <label htmlFor="listaLineas">Selecciona una línea:</label>
           <select
             id="listaLineas"
             value={selectedLinea}
-            required={true}
+            required
             onChange={(e) => setSelectedLinea(e.target.value)}
           >
             <option value="">Seleccione...</option>
