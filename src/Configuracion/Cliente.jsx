@@ -1,7 +1,9 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { obtenerCliente } from "../Services/ClienteService";
+import PropTypes from "prop-types";
+
 
 export default function Cliente({ title }) {
   const urlBase = "http://localhost:8080/nails/clientes";
@@ -18,7 +20,7 @@ export default function Cliente({ title }) {
 
   useEffect(() => {
     cargarCliente();
-  }, []);
+  });
 
   const cargarCliente = async () => {
     if (id > 0) {
@@ -119,3 +121,8 @@ export default function Cliente({ title }) {
     </div>
   );
 }
+
+
+Cliente.propTypes = {
+  title: PropTypes.node.isRequired,
+};

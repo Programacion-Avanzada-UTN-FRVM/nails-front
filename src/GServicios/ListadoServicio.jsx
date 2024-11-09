@@ -1,14 +1,15 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { IMAGEN_EDIT, IMAGEN_DELETE, ITEMS_PER_PAGE } from "../App.config";
+import { IMAGEN_DELETE, ITEMS_PER_PAGE } from "../App.config";
 import { ServicioContext } from "./ServicioContext";
 import { eliminarServicio, obtenerServicios } from "../Services/ServicioService";
+import Modal from "react-bootstrap/Modal"; // Necesitarás instalar react-bootstrap para el modal
 
 export default function ListadoServicio() {
   const { servicios, setServicios } = useContext(ServicioContext);
   const [consulta, setConsulta] = useState("");
   const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(ITEMS_PER_PAGE);
+  const [pageSize] = useState(ITEMS_PER_PAGE);
   const [totalPages, setTotalPages] = useState(0);
   const [sortConfig, setSortConfig] = useState({
     key: null,
@@ -16,6 +17,8 @@ export default function ListadoServicio() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [showModal, setShowModal] = useState(false); // Estado para mostrar/ocultar el modal
+  const [selectedServicio, setSelectedServicio] = useState(null); // Estado para almacenar el servicio seleccionado
 
   useEffect(() => {
     getDatos();
@@ -70,14 +73,13 @@ export default function ListadoServicio() {
 
   const formatearFecha = (fecha) => {
     const date = new Date(fecha);
-    const dia = String(date.getDate()).padStart(2, '0'); // Añade ceros en el caso de días de un solo dígito
-    const mes = String(date.getMonth() + 1).padStart(2, '0'); // Los meses empiezan desde 0, así que se suma 1
+    const dia = String(date.getDate()).padStart(2, '0');
+    const mes = String(date.getMonth() + 1).padStart(2, '0');
     const año = date.getFullYear();
   
-    return `${dia}/${mes}/${año}`; // Puedes modificar el formato según tus necesidades
+    return `${dia}/${mes}/${año}`;
   };
   
-
   const filteredData = () => {
     const query = consulta.toLowerCase();
     const sorted = [...servicios]
@@ -96,7 +98,14 @@ export default function ListadoServicio() {
         }
         return 0;
       });
+
     return sorted;
+  };
+
+  // Función para abrir el modal con los detalles del servicio
+  const mostrarInfo = (servicio) => {
+    setSelectedServicio(servicio);
+    setShowModal(true);
   };
 
   return (
@@ -170,28 +179,22 @@ export default function ListadoServicio() {
                   <td>{servicio.clienteRazonSocial}</td>
                   <td>{formatearFecha(servicio.fechaDocumento)}</td>
                   <td className="text-center">
-                    <div>
-                      <Link
-                        to={`/servicio/${servicio.id}`}
-                        className="btn btn-link btn-sm me-3"
-                      >
-                        <img
-                          src={IMAGEN_EDIT}
-                          style={{ width: "20px", height: "20px" }}
-                        />
-                        Editar
-                      </Link>
-                      <button
-                        onClick={() => eliminar(servicio.id)}
-                        className="btn btn-link btn-sm me-3"
-                      >
-                        <img
-                          src={IMAGEN_DELETE}
-                          style={{ width: "20px", height: "20px" }}
-                        />
-                        Eliminar
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => mostrarInfo(servicio)}
+                      className="btn btn-link btn-sm me-3"
+                    >
+                      Mostrar Info
+                    </button>
+                    <button
+                      onClick={() => eliminar(servicio.id)}
+                      className="btn btn-link btn-sm me-3"
+                    >
+                      <img
+                        src={IMAGEN_DELETE}
+                        style={{ width: "20px", height: "20px" }}
+                      />
+                      Eliminar
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -230,6 +233,30 @@ export default function ListadoServicio() {
           </div>
         </>
       )}
+
+      {/* Modal para mostrar detalles del servicio */}
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Información del Servicio</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedServicio ? (
+            <div>
+              <p><strong>ID:</strong> {selectedServicio.id}</p>
+              <p><strong>Cliente:</strong> {selectedServicio.clienteRazonSocial}</p>
+              <p><strong>Fecha del Documento:</strong> {formatearFecha(selectedServicio.fechaDocumento)}</p>
+              {/* Aquí puedes añadir más campos según la información disponible */}
+            </div>
+          ) : (
+            <p>Cargando información...</p>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <button className="btn btn-secondary" onClick={() => setShowModal(false)}>
+            Cerrar
+          </button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

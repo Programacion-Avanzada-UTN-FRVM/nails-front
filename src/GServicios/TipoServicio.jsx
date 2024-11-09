@@ -1,10 +1,11 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   newTipoServicio,
   obtenerTipoServicio,
 } from "../Services/TipoServicioService";
+import PropTypes from "prop-types";
+
 
 export default function TipoServicio({ title }) {
   const navegacion = useNavigate();
@@ -18,7 +19,7 @@ export default function TipoServicio({ title }) {
 
   useEffect(() => {
     cargarTipoServicio();
-  }, []);
+  });
 
   const cargarTipoServicio = async () => {
     if (id > 0) {
@@ -86,3 +87,7 @@ export default function TipoServicio({ title }) {
     </div>
   );
 }
+
+TipoServicio.propTypes = {
+  title: PropTypes.node.isRequired,
+};

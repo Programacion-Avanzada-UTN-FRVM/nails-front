@@ -1,5 +1,7 @@
 // LineaContext.js
-import React, { createContext, useState } from "react";
+import { createContext, useState } from "react";
+import PropTypes from "prop-types";
+
 
 export const TipoServicioContext = createContext();
 
@@ -11,6 +13,10 @@ const TipoServicioProvider = ({ children }) => {
       {children}
     </TipoServicioContext.Provider>
   );
+};
+
+TipoServicioProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export default TipoServicioProvider;

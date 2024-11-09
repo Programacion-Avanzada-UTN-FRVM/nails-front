@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { newLinea, obtenerLinea } from "../Services/LineaService";
+import PropTypes from "prop-types";
+
 
 export default function Linea({ title }) {
   let navegacion = useNavigate();
@@ -14,7 +16,7 @@ export default function Linea({ title }) {
 
   useEffect(() => {
     cargarModel();
-  }, []);
+  });
 
   const cargarModel = async () => {
     if (id > 0) {
@@ -82,3 +84,8 @@ export default function Linea({ title }) {
     </div>
   );
 }
+
+
+Linea.propTypes = {
+  title: PropTypes.node.isRequired,
+};

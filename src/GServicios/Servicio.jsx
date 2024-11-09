@@ -1,9 +1,10 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { newServicio, obtenerServicio } from "../Services/ServicioService";
 import { obtenerClientesForCombo } from "../Services/ClienteService";
 import { obtenerTiposServiciosForCombo } from "../Services/TipoServicioService";
+import PropTypes from "prop-types";
+
 
 export default function Servicio({ title }) {
   let navegacion = useNavigate();
@@ -29,7 +30,7 @@ export default function Servicio({ title }) {
     cargarModel();
     cargarClientes();
     cargarTipoServicios();
-  }, []);
+  });
 
   // Calcular el total cada vez que cambie la lista de servicios
   useEffect(() => {
@@ -39,16 +40,6 @@ export default function Servicio({ title }) {
     );
     setTotal(nuevoTotal);
   }, [servicios]);
-
-  const cargarModel2 = async () => {
-    if (id > 0) {
-      const resultado = await obtenerServicio(id);
-      setServicio(resultado);
-      setSelectedCliente(resultado.cliente.id); // Establecer el cliente seleccionado
-      setFecha(new Date(resultado.fechaDocumento).toISOString().split("T")[0]); // Establecer la fecha
-      setServicios(resultado.listaItems); // Establecer los item servicios cargados
-    }
-  };
   const cargarModel = async () => {
     if (id > 0) {
       const resultado = await obtenerServicio(id);
@@ -79,13 +70,6 @@ export default function Servicio({ title }) {
   const handleRemoveServicio = (index) => {
     const newServicios = [...servicios];
     newServicios.splice(index, 1);
-    setServicios(newServicios);
-  };
-
-  const handleServicioChangeBoorar = (index, event) => {
-    const { name, value } = event.target;
-    const newServicios = [...servicios];
-    newServicios[index] = { ...newServicios[index], [name]: value };
     setServicios(newServicios);
   };
 
@@ -281,3 +265,8 @@ export default function Servicio({ title }) {
     </div>
   );
 }
+
+
+Servicio.propTypes = {
+  title: PropTypes.node.isRequired,
+};

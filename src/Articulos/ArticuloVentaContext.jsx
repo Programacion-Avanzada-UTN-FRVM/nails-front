@@ -1,4 +1,5 @@
-import React, { createContext, useState } from "react";
+import { createContext, useState } from "react";
+import PropTypes from "prop-types";
 
 export const ArticuloVentaContext = createContext();
 
@@ -10,6 +11,11 @@ const ArticuloVentaProvider = ({ children }) => {
       {children}
     </ArticuloVentaContext.Provider>
   );
+};
+
+// Validación de prop-types para children
+ArticuloVentaProvider.propTypes = {
+  children: PropTypes.node.isRequired,
 };
 
 export default ArticuloVentaProvider;

@@ -1,7 +1,6 @@
-import axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { ITEMS_PER_PAGE, API_URL } from "../App.config";
+import { useContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { ITEMS_PER_PAGE } from "../App.config";
 import { ClienteContext } from "./ClienteContext";
 import { obtenerClientes, eliminarCliente } from "../Services/ClienteService";
 
@@ -9,7 +8,7 @@ export default function ListadoCliente() {
   const { clientes, setClientes } = useContext(ClienteContext);
   const [consulta, setConsulta] = useState("");
   const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(ITEMS_PER_PAGE);
+  const [pageSize] = useState(ITEMS_PER_PAGE);
   const [totalPages, setTotalPages] = useState(0);
   const [sortConfig, setSortConfig] = useState({
     key: null,

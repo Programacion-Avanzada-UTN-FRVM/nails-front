@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   newArticuloVenta,
   obtenerArticuloVenta,
 } from "../Services/ArticuloVentaService";
 import { obtenerLineas2 } from "../Services/LineaService";
+import PropTypes from "prop-types";
+
 
 export default function ArticuloVenta({ title }) {
   let navegacion = useNavigate();
@@ -22,7 +24,7 @@ export default function ArticuloVenta({ title }) {
   useEffect(() => {
     cargarModel();
     cargarLineas();
-  }, []);
+  });
 
   const cargarModel = async () => {
     if (id > 0) {
@@ -112,3 +114,7 @@ export default function ArticuloVenta({ title }) {
     </div>
   );
 }
+
+ArticuloVenta.propTypes = {
+  title: PropTypes.node.isRequired,
+};
