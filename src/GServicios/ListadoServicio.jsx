@@ -169,6 +169,14 @@ export default function ListadoServicio() {
                     </span>
                   )}
                 </th>
+                <th scope="col" onClick={() => handleSort("total")}>
+                  Total
+                  {sortConfig.key === "total" && (
+                    <span>
+                      {sortConfig.direction === "ascending" ? " 🔽" : " 🔼"}
+                    </span>
+                  )}
+                </th>
                 <th scope="col">Acciones</th>
               </tr>
             </thead>
@@ -178,6 +186,7 @@ export default function ListadoServicio() {
                   <th scope="row">{servicio.id}</th>
                   <td>{servicio.clienteRazonSocial}</td>
                   <td>{formatearFecha(servicio.fechaDocumento)}</td>
+                  <td>{servicio.total}</td>
                   <td className="text-center">
                     <button
                       onClick={() => mostrarInfo(servicio)}
@@ -245,6 +254,7 @@ export default function ListadoServicio() {
               <p><strong>ID:</strong> {selectedServicio.id}</p>
               <p><strong>Cliente:</strong> {selectedServicio.clienteRazonSocial}</p>
               <p><strong>Fecha del Documento:</strong> {formatearFecha(selectedServicio.fechaDocumento)}</p>
+              <p><strong>Total: </strong>${selectedServicio.total}</p>
               {/* Aquí puedes añadir más campos según la información disponible */}
             </div>
           ) : (
