@@ -13,29 +13,23 @@ export default function ListadoCliente() {
   const [sortConfig, setSortConfig] = useState({
     key: null,
     direction: "ascending",
-  }); //se utiliza para el orden
+  });
 
   useEffect(() => {
-    getDatos();
+    cargarClientes();
   }, [page, pageSize, consulta]);
 
-  const handlePageChange = (newPage) => {
-    setPage(newPage);
+  const cargarClientes = async () => {
+    try {
+      const response = await obtenerClientes(consulta, page, pageSize);
+      setClientes(response.content);
+      setTotalPages(response.totalPages);
+    } catch (error) {
+      console.error("Error al obtener los clientes:", error);
+    }
   };
 
-  const getDatos = async () => {
-    console.log("carga " + page);
-    obtenerClientes(consulta, page, pageSize)
-      .then((response) => {
-        setClientes(response.content);
-        setTotalPages(response.totalPages);
-      })
-      .catch((error) => {
-        console.error("Error fetching items:", error);
-      });
-  };
-
-  const handConsultaChange = (e) => {
+  const handleConsultaChange = (e) => {
     setConsulta(e.target.value);
   };
 
@@ -43,7 +37,7 @@ export default function ListadoCliente() {
     try {
       const eliminacionExitosa = await eliminarCliente(id);
       if (eliminacionExitosa) {
-        getDatos();
+        cargarClientes();
       } else {
         console.error("Error al eliminar el cliente");
       }
@@ -51,8 +45,6 @@ export default function ListadoCliente() {
       console.error("Error al eliminar el cliente:", error);
     }
   };
-
-  ///////////////////////////////////////Para el orden de las tablas///////////////////////////////////////////////////
 
   const handleSort = (key) => {
     let direction = "ascending";
@@ -77,13 +69,12 @@ export default function ListadoCliente() {
     }
     return sorted;
   };
-  ///////////////////////////////////////Hasta aca para el orden de las tablas///////////////////////////////////////////////////
 
   return (
     <div className="container">
       <div>
         <h1> Gestión de Clientes </h1>
-        <hr></hr>
+        <hr />
       </div>
 
       <div className="row d-md-flex justify-content-md-end">
@@ -95,89 +86,65 @@ export default function ListadoCliente() {
             type="search"
             aria-label="Search"
             value={consulta}
-            onChange={handConsultaChange}
-          ></input>
+            onChange={handleConsultaChange}
+          />
         </div>
         <div className="col-1">
-          <button
-            onClick={() => getDatos()}
-            className="btn btn-outline-success"
-            type="submit"
-          >
+          <button onClick={() => cargarClientes()} className="btn btn-outline-success" type="button">
             Buscar
           </button>
         </div>
       </div>
-      <hr></hr>
+      <hr />
       <table className="table table-striped table-hover align-middle">
         <thead className="table-dark">
           <tr>
             <th scope="col" onClick={() => handleSort("id")}>
               #
               {sortConfig.key === "id" && (
-                <span>
-                  {sortConfig.direction === "ascending" ? " 🔽" : " 🔼"}
-                </span>
+                <span>{sortConfig.direction === "ascending" ? " 🔽" : " 🔼"}</span>
               )}
             </th>
             <th scope="col" onClick={() => handleSort("razonSocial")}>
               Apellido y Nombre
               {sortConfig.key === "razonSocial" && (
-                <span>
-                  {sortConfig.direction === "ascending" ? " 🔽" : " 🔼"}
-                </span>
+                <span>{sortConfig.direction === "ascending" ? " 🔽" : " 🔼"}</span>
               )}
             </th>
             <th scope="col" onClick={() => handleSort("celular")}>
               Cel
               {sortConfig.key === "celular" && (
-                <span>
-                  {sortConfig.direction === "ascending" ? " 🔽" : " 🔼"}
-                </span>
+                <span>{sortConfig.direction === "ascending" ? " 🔽" : " 🔼"}</span>
               )}
             </th>
             <th scope="col" onClick={() => handleSort("mail")}>
               Mail
               {sortConfig.key === "mail" && (
-                <span>
-                  {sortConfig.direction === "ascending" ? " 🔽" : " 🔼"}
-                </span>
+                <span>{sortConfig.direction === "ascending" ? " 🔽" : " 🔼"}</span>
               )}
             </th>
             <th scope="col">Acciones</th>
           </tr>
         </thead>
         <tbody>
-          {
-            //iteramos empleados
-            sortedData().map((cliente, indice) => (
-              <tr key={indice}>
-                <th scope="row">{cliente.id}</th>
-                <td>{cliente.razonSocial}</td>
-                <td>{cliente.celular}</td>
-                <td>{cliente.mail}</td>
-
-                <td className="text-center">
-                  <div>
-                    <Link
-                      to={`/cliente/${cliente.id}`}
-                      className="btn btn-link btn-sm me-3"
-                    >
-                      Editar
-                    </Link>
-
-                    <button
-                      onClick={() => eliminar(cliente.id)}
-                      className="btn btn-link btn-sm me-3"
-                    >
-                      {" "}
-                      Eliminar
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))
-          }
+          {sortedData().map((cliente, indice) => (
+            <tr key={indice}>
+              <th scope="row">{cliente.id}</th>
+              <td>{cliente.razonSocial}</td>
+              <td>{cliente.celular}</td>
+              <td>{cliente.mail}</td>
+              <td className="text-center">
+                <div>
+                  <Link to={`/cliente/${cliente.id}`} className="btn btn-link btn-sm me-3">
+                    Editar
+                  </Link>
+                  <button onClick={() => eliminar(cliente.id)} className="btn btn-link btn-sm me-3">
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
 
@@ -194,15 +161,13 @@ export default function ListadoCliente() {
         </div>
       </div>
 
-      {/* /////////////////////// Esto se utiliza para hacer la paginacion  ///////////////////////////////// */}
-
       <div className="pagination d-md-flex justify-content-md-end">
         {Array.from({ length: totalPages }, (_, i) => i).map((pageNumber) => (
           <a
             key={pageNumber}
             href="#"
             onClick={(e) => {
-              e.preventDefault(); // Previene el comportamiento predeterminado del enlace
+              e.preventDefault();
               handlePageChange(pageNumber);
             }}
           >
@@ -210,8 +175,6 @@ export default function ListadoCliente() {
           </a>
         ))}
       </div>
-
-      {/* /////////////////////// fin de la paginacion  ///////////////////////////////// */}
     </div>
   );
 }

@@ -95,7 +95,7 @@ export default function Servicio({ title }) {
   const onSubmit = async (e) => {
     e.preventDefault();
     const fechaActual = new Date().toISOString().split("T")[0];
-
+  
     if (fecha > fechaActual) {
       setErrors((prevErrors) => ({
         ...prevErrors,
@@ -105,7 +105,7 @@ export default function Servicio({ title }) {
     } else {
       setErrors((prevErrors) => ({ ...prevErrors, fecha: "" }));
     }
-
+  
     if (!selectedCliente) {
       setErrors((prevErrors) => ({
         ...prevErrors,
@@ -115,7 +115,7 @@ export default function Servicio({ title }) {
     } else {
       setErrors((prevErrors) => ({ ...prevErrors, cliente: "" }));
     }
-
+  
     const newServiciosErrors = servicios.map((item) => {
       const itemErrors = {};
       if (!item.tipoServicio)
@@ -123,7 +123,7 @@ export default function Servicio({ title }) {
       if (!item.precio) itemErrors.precio = "Debe ingresar un precio";
       return itemErrors;
     });
-
+  
     if (newServiciosErrors.some((item) => Object.keys(item).length !== 0)) {
       setErrors((prevErrors) => ({
         ...prevErrors,
@@ -139,7 +139,8 @@ export default function Servicio({ title }) {
         }),
       }));
     }
-
+  
+    // Incluye el total en el objeto data
     const data = {
       ...servicio,
       fechaDocumento: fecha,
@@ -148,11 +149,13 @@ export default function Servicio({ title }) {
         ...item,
         tipoServicioId: item.tipoServicioId,
       })),
+      total: total, // Añadido aquí
     };
-
+  
     await newServicio(data);
     navegacion("/servicioList");
   };
+  
 
   return (
     <div className="container">
