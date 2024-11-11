@@ -73,21 +73,21 @@ export default function ListadoServicio() {
 
   const formatearFecha = (fecha) => {
     const date = new Date(fecha);
- 
+
     date.setDate(date.getDate() + 1);
-  
+
     const dia = String(date.getDate()).padStart(2, '0');
     const mes = String(date.getMonth() + 1).padStart(2, '0');
     const año = date.getFullYear();
-  
+
     return `${dia}/${mes}/${año}`;
   };
-  
-  
+
+
   const filteredData = () => {
     const query = consulta.toLowerCase();
     const sorted = [...servicios]
-      .filter((servicio) => 
+      .filter((servicio) =>
         servicio.id.toString().includes(query) ||
         servicio.clienteRazonSocial.toLowerCase().includes(query) ||
         servicio.fechaDocumento.toLowerCase().includes(query)
@@ -110,6 +110,13 @@ export default function ListadoServicio() {
   const mostrarInfo = (servicio) => {
     setSelectedServicio(servicio);
     setShowModal(true);
+  };
+
+  const formatearTotal = (total) => {
+    return total
+      .toFixed(2) // Asegura dos decimales
+      .replace('.', ',') // Reemplaza el punto decimal por una coma
+      .replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Agrega el separador de miles
   };
 
   return (
@@ -190,7 +197,7 @@ export default function ListadoServicio() {
                   <th scope="row">{servicio.id}</th>
                   <td>{servicio.clienteRazonSocial}</td>
                   <td>{formatearFecha(servicio.fechaDocumento)}</td>
-                  <td>{servicio.total}</td>
+                  <td>${formatearTotal(servicio.total)}</td>
                   <td className="text-center">
                     <button
                       onClick={() => mostrarInfo(servicio)}
@@ -258,7 +265,7 @@ export default function ListadoServicio() {
               <p><strong>ID:</strong> {selectedServicio.id}</p>
               <p><strong>Cliente:</strong> {selectedServicio.clienteRazonSocial}</p>
               <p><strong>Fecha del Documento:</strong> {formatearFecha(selectedServicio.fechaDocumento)}</p>
-              <p><strong>Total: </strong>${selectedServicio.total}</p>
+              <p><strong>Total: </strong>${formatearTotal(selectedServicio.total)}</p>
               {/* Aquí puedes añadir más campos según la información disponible */}
             </div>
           ) : (
