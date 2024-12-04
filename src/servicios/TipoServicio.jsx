@@ -1,17 +1,21 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { newLinea, obtenerLinea } from "../Services/LineaService";
+import {
+  newTipoServicio,
+  obtenerTipoServicio,
+} from "../services/TipoServicioService";
 
-export default function Linea({ title }) {
+export default function TipoServicio({ title }) {
   let navegacion = useNavigate();
 
   const { id } = useParams();
 
-  const [linea, setLinea] = useState({
+  const [tipoServicio, setTipoServicio] = useState({
     denominacion: "",
   });
 
-  const { denominacion } = linea;
+  const { denominacion } = tipoServicio;
 
   useEffect(() => {
     cargarModel();
@@ -20,28 +24,27 @@ export default function Linea({ title }) {
   const cargarModel = async () => {
     if (id > 0) {
       console.log(id);
-      const resultado = await obtenerLinea(id);
-      console.log(resultado);
-      setLinea(resultado);
+      const resultado = await obtenerTipoServicio(id);
+      setTipoServicio(resultado);
     }
   };
 
   const onInputChange = ({ target: { name, value } }) => {
     //spread operator ... (expandir los atributos)
-    setLinea({ ...linea, [name]: value });
+    setTipoServicio({ ...tipoServicio, [name]: value });
   };
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    newLinea(linea);
+    newTipoServicio(tipoServicio);
     // Redirigimos a la pagina de inicio
-    navegacion("/lineaList");
+    navegacion("/tipoServicioList");
   };
 
   return (
     <div className="container">
       <div>
-        <h1> Gestión de Linea / {title} </h1>
+        <h1> Gestión de tipo servicio / {title} </h1>
         <hr></hr>
       </div>
 
@@ -69,7 +72,7 @@ export default function Linea({ title }) {
             </button>
           </div>
           <div className="col-4">
-            <a href="/lineaList" className="btn btn-info btn-sm me-3">
+            <a href="/tipoServicioList" className="btn btn-info btn-sm me-3">
               Regresar
             </a>
           </div>

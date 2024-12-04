@@ -4,8 +4,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   newArticuloVenta,
   obtenerArticuloVenta,
-} from "../Services/ArticuloVentaService";
-import { obtenerLineas2 } from "../Services/LineaService";
+} from "../services/ArticuloVentaService";
+import { obtenerLineas2 } from "../services/LineaService";
 
 export default function ArticuloVenta({ title }) {
   let navegacion = useNavigate();

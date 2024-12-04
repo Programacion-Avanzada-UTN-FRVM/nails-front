@@ -1,16 +1,22 @@
-import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { ITEMS_PER_PAGE, API_URL } from "../App.config";
-import { ClienteContext } from "./ClienteContext";
-import { obtenerClientes, eliminarCliente } from "../Services/ClienteService";
+import { IMAGEN_EDIT, IMAGEN_DELETE, ITEMS_PER_PAGE } from "../App.config";
+import { Link } from "react-router-dom";
 
-export default function ListadoCliente() {
-  const { clientes, setClientes } = useContext(ClienteContext);
+import {
+  obtenerArticulosVenta,
+  eliminarArticulosVenta,
+} from "../services/ArticuloVentaService";
+import { ArticuloVentaContext } from "./ArticuloVentaContext";
+
+export default function ListadoArticulosVenta() {
+  const { articulos, setArticulos } = useContext(ArticuloVentaContext);
+
   const [consulta, setConsulta] = useState("");
+
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(ITEMS_PER_PAGE);
   const [totalPages, setTotalPages] = useState(0);
+
   const [sortConfig, setSortConfig] = useState({
     key: null,
     direction: "ascending",
@@ -26,9 +32,9 @@ export default function ListadoCliente() {
 
   const getDatos = async () => {
     console.log("carga " + page);
-    obtenerClientes(consulta, page, pageSize)
+    obtenerArticulosVenta(consulta, page, pageSize)
       .then((response) => {
-        setClientes(response.content);
+        setArticulos(response.content);
         setTotalPages(response.totalPages);
       })
       .catch((error) => {
@@ -42,14 +48,14 @@ export default function ListadoCliente() {
 
   const eliminar = async (id) => {
     try {
-      const eliminacionExitosa = await eliminarCliente(id);
+      const eliminacionExitosa = await eliminarArticulosVenta(id);
       if (eliminacionExitosa) {
         getDatos();
       } else {
-        console.error("Error al eliminar el cliente");
+        console.error("Error al eliminar el articulo");
       }
     } catch (error) {
-      console.error("Error al eliminar el cliente:", error);
+      console.error("Error al eliminar el articulo:", error);
     }
   };
 
@@ -64,7 +70,7 @@ export default function ListadoCliente() {
   };
 
   const sortedData = () => {
-    const sorted = [...clientes];
+    const sorted = [...articulos];
     if (sortConfig.key !== null) {
       sorted.sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
@@ -78,12 +84,13 @@ export default function ListadoCliente() {
     }
     return sorted;
   };
+
   ///////////////////////////////////////Hasta aca para el orden de las tablas///////////////////////////////////////////////////
 
   return (
     <div className="container">
       <div>
-        <h1> Gestión de Clientes </h1>
+        <h1> Gestión de Articulos Venta </h1>
         <hr></hr>
       </div>
 
@@ -121,57 +128,48 @@ export default function ListadoCliente() {
                 </span>
               )}
             </th>
-            <th scope="col" onClick={() => handleSort("razonSocial")}>
-              Apellido y Nombre
-              {sortConfig.key === "razonSocial" && (
+            <th scope="col" onClick={() => handleSort("denominacion")}>
+              Denominación
+              {sortConfig.key === "denominacion" && (
                 <span>
                   {sortConfig.direction === "ascending" ? " 🔽" : " 🔼"}
                 </span>
               )}
             </th>
-            <th scope="col" onClick={() => handleSort("celular")}>
-              Cel
-              {sortConfig.key === "celular" && (
-                <span>
-                  {sortConfig.direction === "ascending" ? " 🔽" : " 🔼"}
-                </span>
-              )}
-            </th>
-            <th scope="col" onClick={() => handleSort("mail")}>
-              Mail
-              {sortConfig.key === "mail" && (
-                <span>
-                  {sortConfig.direction === "ascending" ? " 🔽" : " 🔼"}
-                </span>
-              )}
-            </th>
+
             <th scope="col">Acciones</th>
           </tr>
         </thead>
         <tbody>
           {
             //iteramos empleados
-            sortedData().map((cliente, indice) => (
+            sortedData().map((articulo, indice) => (
               <tr key={indice}>
-                <th scope="row">{cliente.id}</th>
-                <td>{cliente.razonSocial}</td>
-                <td>{cliente.celular}</td>
-                <td>{cliente.mail}</td>
+                <th scope="row">{articulo.id}</th>
+                <td>{articulo.denominacion}</td>
 
                 <td className="text-center">
                   <div>
                     <Link
-                      to={`/cliente/${cliente.id}`}
+                      to={`/articulo/${articulo.id}`}
                       className="btn btn-link btn-sm me-3"
                     >
+                      <img
+                        src={IMAGEN_EDIT}
+                        style={{ width: "20px", height: "20px" }}
+                      />
                       Editar
                     </Link>
 
                     <button
-                      onClick={() => eliminar(cliente.id)}
+                      onClick={() => eliminar(articulo.id)}
                       className="btn btn-link btn-sm me-3"
                     >
                       {" "}
+                      <img
+                        src={IMAGEN_DELETE}
+                        style={{ width: "20px", height: "20px" }}
+                      />
                       Eliminar
                     </button>
                   </div>
@@ -184,7 +182,7 @@ export default function ListadoCliente() {
 
       <div className="row d-md-flex justify-content-md-end">
         <div className="col-4">
-          <Link to={`/cliente`} className="btn btn-success btn-sm me-3">
+          <Link to={`/articulo`} className="btn btn-success btn-sm me-3">
             Nuevo
           </Link>
         </div>

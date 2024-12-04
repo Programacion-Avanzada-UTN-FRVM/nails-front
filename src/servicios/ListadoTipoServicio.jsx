@@ -2,11 +2,14 @@ import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { IMAGEN_EDIT, IMAGEN_DELETE, ITEMS_PER_PAGE } from "../App.config";
-import { LineaContext } from "./LineaContext";
-import { obtenerLineas, eliminarLineas } from "../Services/LineaService";
+import { TipoServicioContext } from "./TipoServicioContext";
+import {
+  obtenerTiposServicios,
+  eliminarTipoServicio,
+} from "../services/TipoServicioService";
 
-export default function ListadoLinea() {
-  const { lineas, setLineas } = useContext(LineaContext);
+export default function ListadoTipoServicio() {
+  const { tiposServicios, setTiposServicios } = useContext(TipoServicioContext);
 
   const [consulta, setConsulta] = useState("");
   const [page, setPage] = useState(0);
@@ -18,6 +21,7 @@ export default function ListadoLinea() {
   }); //se utiliza para el orden
 
   useEffect(() => {
+    console.log("entro ");
     getDatos();
   }, [page, pageSize, consulta]);
 
@@ -27,9 +31,9 @@ export default function ListadoLinea() {
 
   const getDatos = async () => {
     console.log("carga " + page);
-    obtenerLineas(consulta, page, pageSize)
+    obtenerTiposServicios(consulta, page, pageSize)
       .then((response) => {
-        setLineas(response.content);
+        setTiposServicios(response.content);
         setTotalPages(response.totalPages);
       })
       .catch((error) => {
@@ -43,14 +47,14 @@ export default function ListadoLinea() {
 
   const eliminar = async (id) => {
     try {
-      const eliminacionExitosa = await eliminarLineas(id);
+      const eliminacionExitosa = await eliminarTipoServicio(id);
       if (eliminacionExitosa) {
         getDatos();
       } else {
-        console.error("Error al eliminar la línea");
+        console.error("Error al eliminar el tipo servicio");
       }
     } catch (error) {
-      console.error("Error al eliminar la línea:", error);
+      console.error("Error al eliminar el tipo servicioss:", error);
     }
   };
 
@@ -64,7 +68,7 @@ export default function ListadoLinea() {
   };
 
   const sortedData = () => {
-    const sorted = [...lineas];
+    const sorted = [...tiposServicios];
     if (sortConfig.key !== null) {
       sorted.sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
@@ -84,7 +88,7 @@ export default function ListadoLinea() {
   return (
     <div className="container">
       <div>
-        <h1> Gestión de Lineas </h1>
+        <h1> Gestión de Tipo Servicio </h1>
         <hr></hr>
       </div>
 
@@ -137,15 +141,15 @@ export default function ListadoLinea() {
         <tbody>
           {
             //iteramos empleados
-            sortedData().map((linea, indice) => (
+            sortedData().map((tipoServicio, indice) => (
               <tr key={indice}>
-                <th scope="row">{linea.id}</th>
-                <td>{linea.denominacion}</td>
+                <th scope="row">{tipoServicio.id}</th>
+                <td>{tipoServicio.denominacion}</td>
 
                 <td className="text-center">
                   <div>
                     <Link
-                      to={`/linea/${linea.id}`}
+                      to={`/tipoServicio/${tipoServicio.id}`}
                       className="btn btn-link btn-sm me-3"
                     >
                       <img
@@ -156,7 +160,7 @@ export default function ListadoLinea() {
                     </Link>
 
                     <button
-                      onClick={() => eliminar(linea.id)}
+                      onClick={() => eliminar(tipoServicio.id)}
                       className="btn btn-link btn-sm me-3"
                     >
                       {" "}
@@ -176,7 +180,7 @@ export default function ListadoLinea() {
 
       <div className="row d-md-flex justify-content-md-end">
         <div className="col-4">
-          <Link to={`/linea`} className="btn btn-success btn-sm me-3">
+          <Link to={`/tipoServicio`} className="btn btn-success btn-sm me-3">
             Nuevo
           </Link>
         </div>

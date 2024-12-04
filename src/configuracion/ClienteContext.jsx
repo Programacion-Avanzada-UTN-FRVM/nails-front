@@ -1,6 +1,7 @@
-import React, { createContext, useState } from "react";
+import { createContext, useState } from "react";
+import PropTypes from "prop-types";
 
-export const ClienteContext = createContext();
+export const ClienteContext = createContext({});
 
 const ClienteProvider = ({ children }) => {
   const [clientes, setClientes] = useState([]);
@@ -13,3 +14,7 @@ const ClienteProvider = ({ children }) => {
 };
 
 export default ClienteProvider;
+
+ClienteProvider.propTypes = {
+  children: PropTypes.node,
+};

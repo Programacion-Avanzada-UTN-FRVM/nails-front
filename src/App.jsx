@@ -1,24 +1,22 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import ListadoCliente from "./Configuracion/ListadoCliente";
-import Cliente from "./Configuracion/Cliente";
-import ClienteProvider from "./Configuracion/ClienteContext";
+import ListadoCliente from "./configuracion/ListadoCliente";
+import NuevoCliente from "./configuracion/NuevoCliente.jsx";
+import ClienteProvider from "./configuracion/ClienteContext";
 import Menu from "./Menu";
-import ListadoLinea from "./Articulos/ListadoLinea";
-import Linea from "./Articulos/Linea";
-import ListadoArticulosVenta from "./Articulos/ListadoArticulosVenta";
-import ArticuloVenta from "./Articulos/ArticuloVenta";
-import LineaProvider from "./Articulos/LineaContext";
-import TipoServicioProvider from "./GServicios/TipoServicioContext";
-import TipoServicio from "./GServicios/TipoServicio";
-import ListadoTipoServicio from "./GServicios/ListadoTipoServicio";
-import ArticuloVentaProvider from "./Articulos/ArticuloVentaContext";
-import ServicioProvider from "./GServicios/ServicioContext";
-import Servicio from "./GServicios/Servicio";
-import ListadoServicio from "./GServicios/ListadoServicio";
+import ListadoLinea from "./articulos/ListadoLinea";
+import Linea from "./articulos/Linea";
+import ListadoArticulosVenta from "./articulos/ListadoArticulosVenta";
+import ArticuloVenta from "./articulos/ArticuloVenta";
+import LineaProvider from "./articulos/LineaContext";
+import TipoServicioProvider from "./servicios/TipoServicioContext";
+import TipoServicio from "./servicios/TipoServicio";
+import ListadoTipoServicio from "./servicios/ListadoTipoServicio";
+import ArticuloVentaProvider from "./articulos/ArticuloVentaContext";
+import ServicioProvider from "./servicios/ServicioContext";
+import Servicio from "./servicios/Servicio";
+import ListadoServicio from "./servicios/ListadoServicio";
+import { EditarCliente } from "./configuracion/EditarCliente.jsx";
 
 function App() {
   return (
@@ -41,7 +39,7 @@ function App() {
             path="/cliente"
             element={
               <ClienteProvider>
-                <Cliente title="Nuevo" />
+                <NuevoCliente />
               </ClienteProvider>
             }
           />
@@ -50,7 +48,7 @@ function App() {
             path="/cliente/:id"
             element={
               <ClienteProvider>
-                <Cliente title="Editar" />
+                <EditarCliente />
               </ClienteProvider>
             }
           />

@@ -2,14 +2,11 @@ import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { IMAGEN_EDIT, IMAGEN_DELETE, ITEMS_PER_PAGE } from "../App.config";
-import { TipoServicioContext } from "./TipoServicioContext";
-import {
-  obtenerTiposServicios,
-  eliminarTipoServicio,
-} from "../Services/TipoServicioService";
+import { LineaContext } from "./LineaContext";
+import { obtenerLineas, eliminarLineas } from "../services/LineaService";
 
-export default function ListadoTipoServicio() {
-  const { tiposServicios, setTiposServicios } = useContext(TipoServicioContext);
+export default function ListadoLinea() {
+  const { lineas, setLineas } = useContext(LineaContext);
 
   const [consulta, setConsulta] = useState("");
   const [page, setPage] = useState(0);
@@ -21,7 +18,6 @@ export default function ListadoTipoServicio() {
   }); //se utiliza para el orden
 
   useEffect(() => {
-    console.log("entro ");
     getDatos();
   }, [page, pageSize, consulta]);
 
@@ -31,9 +27,9 @@ export default function ListadoTipoServicio() {
 
   const getDatos = async () => {
     console.log("carga " + page);
-    obtenerTiposServicios(consulta, page, pageSize)
+    obtenerLineas(consulta, page, pageSize)
       .then((response) => {
-        setTiposServicios(response.content);
+        setLineas(response.content);
         setTotalPages(response.totalPages);
       })
       .catch((error) => {
@@ -47,14 +43,14 @@ export default function ListadoTipoServicio() {
 
   const eliminar = async (id) => {
     try {
-      const eliminacionExitosa = await eliminarTipoServicio(id);
+      const eliminacionExitosa = await eliminarLineas(id);
       if (eliminacionExitosa) {
         getDatos();
       } else {
-        console.error("Error al eliminar el tipo servicio");
+        console.error("Error al eliminar la línea");
       }
     } catch (error) {
-      console.error("Error al eliminar el tipo servicioss:", error);
+      console.error("Error al eliminar la línea:", error);
     }
   };
 
@@ -68,7 +64,7 @@ export default function ListadoTipoServicio() {
   };
 
   const sortedData = () => {
-    const sorted = [...tiposServicios];
+    const sorted = [...lineas];
     if (sortConfig.key !== null) {
       sorted.sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
@@ -88,7 +84,7 @@ export default function ListadoTipoServicio() {
   return (
     <div className="container">
       <div>
-        <h1> Gestión de Tipo Servicio </h1>
+        <h1> Gestión de Lineas </h1>
         <hr></hr>
       </div>
 
@@ -141,15 +137,15 @@ export default function ListadoTipoServicio() {
         <tbody>
           {
             //iteramos empleados
-            sortedData().map((tipoServicio, indice) => (
+            sortedData().map((linea, indice) => (
               <tr key={indice}>
-                <th scope="row">{tipoServicio.id}</th>
-                <td>{tipoServicio.denominacion}</td>
+                <th scope="row">{linea.id}</th>
+                <td>{linea.denominacion}</td>
 
                 <td className="text-center">
                   <div>
                     <Link
-                      to={`/tipoServicio/${tipoServicio.id}`}
+                      to={`/linea/${linea.id}`}
                       className="btn btn-link btn-sm me-3"
                     >
                       <img
@@ -160,7 +156,7 @@ export default function ListadoTipoServicio() {
                     </Link>
 
                     <button
-                      onClick={() => eliminar(tipoServicio.id)}
+                      onClick={() => eliminar(linea.id)}
                       className="btn btn-link btn-sm me-3"
                     >
                       {" "}
@@ -180,7 +176,7 @@ export default function ListadoTipoServicio() {
 
       <div className="row d-md-flex justify-content-md-end">
         <div className="col-4">
-          <Link to={`/tipoServicio`} className="btn btn-success btn-sm me-3">
+          <Link to={`/linea`} className="btn btn-success btn-sm me-3">
             Nuevo
           </Link>
         </div>

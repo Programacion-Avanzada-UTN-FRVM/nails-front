@@ -5,7 +5,7 @@ import { ServicioContext } from "./ServicioContext";
 import {
   eliminarServicio,
   obtenerServicios,
-} from "../Services/ServicioService";
+} from "../services/ServicioService";
 
 export default function ListadoServicio() {
   const { servicios, setServicios } = useContext(ServicioContext);
@@ -29,6 +29,7 @@ export default function ListadoServicio() {
   const getDatos = async () => {
     setLoading(true);
     setError(null);
+
     try {
       const response = await obtenerServicios(consulta, page, pageSize);
       setServicios(response.content);

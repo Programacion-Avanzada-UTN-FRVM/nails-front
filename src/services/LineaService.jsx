@@ -1,14 +1,16 @@
 import axios from "axios";
-import { API_URL } from "../App.config";
+import {API_URL} from "../App.config";
 
 export async function obtenerLineas(consulta, page, pageSize) {
   const urlBase = API_URL + "/lineasPageQuery";
   try {
-    const { data } = await axios({
-      method: "GET",
-      url: `${urlBase}?consulta=${consulta}&page=${page}&size=${pageSize}`,
-    });
-    return data;
+    // const { data } = await axios({
+    //   method: "GET",
+    //   url: `${urlBase}?consulta=${consulta}&page=${page}&size=${pageSize}`,
+    // });
+
+    const response = await fetch(`${urlBase}?consulta=${consulta}&page=${page}&size=${pageSize}`);
+    return await response.json();
   } catch (error) {
     console.error("Error buscando lineas:", error);
     throw error;
@@ -46,11 +48,21 @@ export async function obtenerLinea(id) {
 export async function newLinea(linea) {
   try {
     if (linea.id > 0) {
-      const { data } = await axios({
-        method: "PUT",
-        url: `${API_URL}/linea/${linea.id}`,
-        data: linea,
+      // const { data } = await axios({
+      //   method: "PUT",
+      //   url: `${API_URL}/linea/${linea.id}`,
+      //   data: linea,
+      // });
+
+      const response = await fetch(`${API_URL}/linea/${linea.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(linea)
       });
+      return await response.json();
+
     } else {
       const { data } = await axios({
         method: "POST",

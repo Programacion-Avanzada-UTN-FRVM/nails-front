@@ -1,9 +1,9 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { newServicio, obtenerServicio } from "../Services/ServicioService";
-import { obtenerClientesForCombo } from "../Services/ClienteService";
-import { obtenerTiposServiciosForCombo } from "../Services/TipoServicioService";
+import { newServicio, obtenerServicio } from "../services/ServicioService";
+import { clienteService } from "../services/ClienteService";
+import { obtenerTiposServiciosForCombo } from "../services/TipoServicioService";
 
 export default function Servicio({ title }) {
   let navegacion = useNavigate();
@@ -60,7 +60,7 @@ export default function Servicio({ title }) {
   };
 
   const cargarClientes = async () => {
-    const resultado = await obtenerClientesForCombo();
+    const resultado = await clienteService.obtenerClientesForCombo();
     setListaClientes(resultado);
   };
 
